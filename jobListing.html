@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Careers Hub Home</title>
+    <script src="jquery.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#postme").click(function() {
+                $.ajax({
+                    type: "POST",
+                    dataType: "json",
+                    url: "http://localhost:3000/Jobs",
+                    data: {
+                        "Company": "NEW",
+                        "job title": "Civil Engineer",
+                        "Location": "WEST"
+                    },
+                    success: function(data) {
+                        console.log("Worked");
+                    },
+                });
+            });
+        });
+
+        $(document).ready(function() {
+            $('#getme').click(function() {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:3000/Jobs',
+
+                    success: function(data) {
+                        $('#div1').html(function() {
+                            let JobsAvailable = '';
+                            $.each(data, function(i, ignore) {
+                                JobsAvailable += '<div>' +
+                                    '<h4>Company: ' + data[i]["Company"] + '</h4>' +
+                                    '<p>Job Title: ' + data[i]["job title"] + '</p>' +
+                                    '<p>Location: ' + data[i]["Location"] + '</p>'
+                                '</div><p>break</p>';
+
+                            })
+                            return JobsAvailable;
+                        })
+                        console.log('good');
+                    }
+                });
+            });
+            $('#search').click(function() {
+                let company = $('#Company').val();
+                let jobSpec = $('#jobtitle').val();
+                let Location = $('#Location').val();
+                let search = '';
+                let searchby = '';
+                if ((company && jobSpec) || (company && Location) ||
+                    (jobSpec && Location) || (company && jobSpec && Location)) {
+                    alert("Please select only one input to search by");
+                } else {
+                    if (company) {
+                        search = "Company";
+                        searchby = company;
+                    } else if (jobSpec) {
+                        search = "job title";
+                        searchby = jobSpec;
+                    } else {
+                        search = "Location";
+                        searchby = Location;
+                    }
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:3000/Jobs?' + search + "=" + searchby,
+
+                        success: function(data) {
+                            $('#div1').html(function() {
+                                let JobsAvailable = '';
+
+                                $.each(data, function(i, ignore) {
+                                    JobsAvailable += '<div>' +
+                                        '<h4>Company: ' + data[i]["Company"] + '</h4>' +
+                                        '<p>Job Title: ' + data[i]["job title"] + '</p>' +
+                                        '<p>Location: ' + data[i]["Location"] + '</p>'
+                                    '</div><p>break</p>';
+                                })
+                                return JobsAvailable;
+                            })
+                            console.log('good');
+                        }
+                    });
+                }
+
+            });
+
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container-fluid" style="background-color: darkgrey;">
+        <h1><a href="#">CareersHub</a></h1>
+        <form>
+            <input type="text" name="username" placeholder="username">
+            <input type="password" name="password" placeholder="password">
+            </br>
+            <input type=button value="Login">
+        </form>
+    </div>
+    </br>
+    <style>
+        div {
+            background-color: gray;
+        }
+        
+        body {
+            border: 3px solid black;
+            background-image: url("CareersHubbg.jpg");
+            height: 100vh;
+            background-size: "cover";
+            background-position: center;
+        }
+        
+        p {
+            text-align: center;
+        }
+    </style>
+    <button id='getme'>View all available jobs</button>
+    <button id='postme'>Add a new job</button><br>
+    <div style="text-align: right;background-color: lightgray;">
+        Search by:<br> Company: <input type="text" id="Company" placeholder="eg MTN or NNPC"><br> Job Title: <input type="text" id="jobtitle" placeholder="eg Auditor"><br> Location: <input type="text" id="Location" placeholder="eg Port Harcourt"><br>
+        <button id="search">Search</button>
+    </div>
+    <span id='div1'></span>
+    <script>
+    </script>
+</body>
+
+</html>
